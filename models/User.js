@@ -15,7 +15,8 @@ const UserSchema = new mongoose.Schema({
   last_name: { type: String },
   faculty: { type: String },
   campus: { type: String },
-  department: { type: String },
+  department: {type: mongoose.Types.ObjectId, ref:'Department'},
+  createdAt: {type: Date,default: Date.now},
 });
 
 const User = mongoose.model('User', UserSchema);

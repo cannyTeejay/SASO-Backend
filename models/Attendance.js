@@ -5,6 +5,7 @@ const AttendanceSchema = new mongoose.Schema({
   session_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Session', required: true },
   student_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   status: { type: String, enum: ['Present', 'Absent', 'Excused'], required: true },
+  markedBy: {type: mongoose.Types.ObjectId, ref:"Lecturer"}
 });
 
 module.exports = mongoose.model('Attendance', AttendanceSchema);

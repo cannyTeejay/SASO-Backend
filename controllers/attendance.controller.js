@@ -1,4 +1,4 @@
-const Attendance = require('../models/Attendance');
+import Attendance from '../models/Attendance.js';
 
 // Create a new attendance record
 exports.createAttendance = async (req, res) => {

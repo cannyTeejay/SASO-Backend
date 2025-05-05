@@ -1,10 +1,8 @@
-import mongoose from "mongoose";
+const mongoose = require('mongoose');
 
-const messageSchema = new mongoose.Schema({
-    sender: {type: mongoose.Types.ObjectId, ref: "User"},
-    receiver: {type: mongoose.Types.ObjectId,ref: "User"},
-    subject: String,
-    content: String
-},{timestamps: true});
+const MessageSchema = new mongoose.Schema({
+    content: String,
+    timestamp: { type: Date, default: Date.now },
+});
 
-module.exports = mongoose.model("Message", messageSchema);
+module.exports = mongoose.model('Message', MessageSchema);

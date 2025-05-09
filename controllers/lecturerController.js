@@ -1,24 +1,29 @@
 const Lecturer = require('../models/Lecturer');
 const User = require('../models/User');
+const bcrypt = require('bcrypt');
 
 exports.createLecturer = async (req, res) => {
     try {
-        const { email, first_name, last_name, faculty, campus, department, title } = req.body;
+        const { email, password, first_name, last_name, faculty, campus, department, title } = req.body;
 
-        // Validation to ensure all required fields are provided
-        if (!email || !first_name || !last_name || !faculty || !campus || !department || !title) {
+        // Validate required fields
+        if (!email || !password || !first_name || !last_name || !faculty || !campus || !department || !title) {
             return res.status(400).json({ message: 'All fields must be provided' });
         }
 
-        // Check if the User already exists
+        // Check if user already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ message: 'User with this email already exists' });
         }
 
-        // Create User object for the Lecturer
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Create User
         const newUser = new User({
             email,
+            password: hashedPassword,
             role: 'lecturer',
             first_name,
             last_name,
@@ -27,28 +32,33 @@ exports.createLecturer = async (req, res) => {
             department,
         });
 
-        // Save the User
         const savedUser = await newUser.save();
 
         // Create Lecturer
         const newLecturer = new Lecturer({
-            lecturer_id: savedUser._id,  // Reference to the created User
+            lecturer_id: savedUser._id,
             title,
         });
 
-        // Save the Lecturer
         const savedLecturer = await newLecturer.save();
 
-        // Return response with saved Lecturer and User
         res.status(201).json({
             message: 'Lecturer and User created successfully',
             lecturer: savedLecturer,
-            user: savedUser
+            user: {
+                _id: savedUser._id,
+                email: savedUser.email,
+                first_name: savedUser.first_name,
+                last_name: savedUser.last_name,
+                role: savedUser.role
+            }
         });
+
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(500).json({ message: error.message });
     }
 };
+
 
 exports.getAllLecturers = async (req, res) => {
     try {

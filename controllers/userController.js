@@ -3,17 +3,17 @@ const User = require('../models/User');
 
 exports.createUser = async (req, res) => {
     try {
-        const { email, password_hash, role, first_name, last_name, faculty, campus, department } = req.body;
-        if (!email || !password_hash || !role) {
-            return res.status(400).json({ message: "Email, password_hash, and role are required" });
+        const { email, password, role, first_name, last_name, faculty, campus, department } = req.body;
+        if (!email || !password || !role) {
+            return res.status(400).json({ message: "Email, password, and role are required" });
         }
 
         const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password_hash, salt);
+        const hashedPassword = await bcrypt.hash(password, salt);
 
         const newUser = new User({
             email,
-            password_hash: hashedPassword,
+            password: hashedPassword,
             role,
             first_name,
             last_name,

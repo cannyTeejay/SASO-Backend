@@ -5,61 +5,52 @@ const bcrypt = require('bcrypt');
 
 exports.createAdmin = async (req, res) => {
     try {
-        const {
-            email,
-            password,
-            first_name,
-            last_name,
-            faculty,
-            campus,
-            department,
-            view_analytics
-        } = req.body;
+        const { email, password, first_name, last_name, faculty, campus, department, view_analytics } = req.body;
 
-        if (!email || !password) {
-            return res.status(400).json({ message: 'Email and password are required.' });
+        // Validate required fields
+        if (!email || !password || !first_name || !last_name || !faculty || !campus || !department) {
+            return res.status(400).json({ message: 'All fields must be provided' });
         }
 
-        // Check if user already exists
+        // Check if the User already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            return res.status(400).json({ message: 'User with this email already exists.' });
+            return res.status(400).json({ message: 'User with this email already exists' });
         }
 
-        // Hash password
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Create User
+        // Create and save the User
         const newUser = new User({
             email,
-            password_hash: hashedPassword,
+            password: hashedPassword,
             role: 'admin',
             first_name,
             last_name,
             faculty,
             campus,
-            department
+            department,
         });
 
         const savedUser = await newUser.save();
 
-        // Create Admin and link to user
+        // Create the Admin document
         const newAdmin = new Admin({
-            user: savedUser._id,
-            view_analytics: view_analytics ?? false
+            user: savedUser._id,  // Reference to the created User
+            view_analytics: view_analytics || false,  // Defaulting to false if not provided
         });
 
         const savedAdmin = await newAdmin.save();
 
+        // Return response with saved Admin and User
         res.status(201).json({
-            message: 'Admin created successfully',
-            user: savedUser,
-            admin: savedAdmin
+            message: 'Admin and User created successfully',
+            admin: savedAdmin,
+            user: savedUser
         });
-
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(400).json({ message: error.message });
     }
 };
 

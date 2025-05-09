@@ -2,14 +2,19 @@ const AdminActivityLog = require('../models/AdminActivityLog');
 
 exports.createAdminActivityLog = async (req, res) => {
     try {
-        const { admin_id, activity, timestamp } = req.body;
+        const { admin_id, activity_type, description } = req.body;
 
         // Validate required fields
-        if (!admin_id || !activity || !timestamp) {
-            return res.status(400).json({ message: "Admin ID, activity, and timestamp are required" });
+        if (!admin_id || !activity_type || !description) {
+            return res.status(400).json({ message: "Admin ID, activity type, and description are required" });
         }
 
-        const newItem = new AdminActivityLog(req.body);
+        const newItem = new AdminActivityLog({
+            admin_id,
+            activity_type,
+            description
+        });
+
         const savedItem = await newItem.save();
         res.status(201).json(savedItem);
     } catch (error) {

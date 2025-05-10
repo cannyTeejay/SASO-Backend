@@ -4,6 +4,7 @@ exports.createSupportRequest = async (req, res) => {
     try {
         const newSupport = new SupportRequest(req.body);
         const savedSupport= await newSupport.save();
+        const populatedSupport = await SupportRequest.findById(savedSupport._id).populate('student_id'); //populate after save
         res.status(201).json(savedSupport);
     } catch (error) {
         res.status(400).json({ message: error.message });

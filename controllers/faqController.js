@@ -12,7 +12,9 @@ exports.createFAQ = async (req, res) => {
 
 exports.getAllFAQs = async (req, res) => {
     try {
-        const faqs = await FAQ.find();
+        const faqs = await FAQ.find()
+            .populate('message_id')                // Includes message content + timestamp
+            .populate('created_by', 'name email'); // only select user name and email
         res.status(200).json(faqs);
     } catch (error) {
         res.status(500).json({ message: error.message });

@@ -4,7 +4,7 @@ const lecturercourseController = require('../controllers/lecturercourseControlle
 const authenticate = require('../middleware/auth.middleware'); // Ensure authentication
 const authorize = require('../middleware/role.middleware'); // Ensure authorization
 
-router.use(authenticate, authorize('lecturer'));
+//router.use(authenticate, authorize('lecturer'));
 
 router.post('/', lecturercourseController.createLecturerCourse);
 router.get('/', lecturercourseController.getAllLecturerCourses);

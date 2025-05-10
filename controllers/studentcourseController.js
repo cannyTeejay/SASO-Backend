@@ -2,8 +2,8 @@ const StudentCourse = require('../models/StudentCourse');
 
 exports.createStudentCourse = async (req, res) => {
     try {
-        const newtudentCourse = new StudentCourse(req.body);
-        const savedStudentCourse = await newtudentCourse.save();
+        const newStudentCourse = new StudentCourse(req.body);
+        const savedStudentCourse = await newStudentCourse.save();
         res.status(201).json(savedStudentCourse);
     } catch (error) {
         res.status(400).json({ message: error.message });

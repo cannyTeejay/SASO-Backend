@@ -1,4 +1,6 @@
 const LecturerCourse = require('../models/LecturerCourse');
+const Lecturer = require('../models/Lecturer');
+const Course = require('../models/Course');
 
 exports.createLecturerCourse = async (req, res) => {
     try {
@@ -16,8 +18,14 @@ exports.createLecturerCourse = async (req, res) => {
             return res.status(404).json({ message: 'Course not found' });
         }
 
+        //Prevent duplicates: same lecturer_id + course_id
+        const existing = await LecturerCourse.findOne({ lecturer_id, course_id });
+        if (existing) {
+            return res.status(409).json({ message: 'This lecturer is already assigned to this course' });
+        }
+
         // Create and save new LecturerCourse
-        const newLecturerCourse = new LecturerCourse({ lecturer_id, course_id, start_date, end_date });
+        const newLecturerCourse = new LecturerCourse({ lecturer_id, course_id});
         const savedLecturerCourse = await newLecturerCourse.save();
 
         res.status(201).json(savedLecturerCourse);
